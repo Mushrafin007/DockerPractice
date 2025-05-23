@@ -364,3 +364,5 @@ FodyWeavers.xsd
 /TestProject/TestProject.csproj
 /TestProject/appsettings.json
 /TestProject/appsettings.Development.json
+/TestProject/appsettings.json
+/TestProject/appsettings.Development.json
