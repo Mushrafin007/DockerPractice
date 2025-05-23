@@ -24,5 +24,11 @@ namespace TestProject.Services.CrudApiService
             var SqlResp = objDapper.ExecuteQuery<ApiCommonResponseModel>(sqlQuery, Parameters).FirstOrDefault();
             return SqlResp;
         }
+        public async Task<getUserDataModel> USP_USERDATA_GET(object Parameters)
+        {
+            string sqlQuery = "USP_USERDATA_GET";
+            var SqlResp = objDapper.ExecuteQuery<getUserDataModel>(sqlQuery, Parameters).FirstOrDefault();
+            return SqlResp;
+        }
     }
 }

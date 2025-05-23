@@ -14,5 +14,10 @@
             public int status { get; set; }
             public string message { get; set; }
         }
+        public class  getUserDataModel : CreateMode
+        {
+            public int Id { get; set; }
+            public string message { get; set; }
+        }
     }
 }

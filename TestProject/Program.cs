@@ -1,7 +1,10 @@
+using AspNetCoreRateLimit;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.OpenApi.Models;
+using StackExchange.Redis;
 using Swashbuckle.AspNetCore;
 using TestProject.Common;
+using TestProject.MiddleWare;
 using TestProject.Services.CrudApiService;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -10,6 +13,24 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 builder.Services.AddTransient<ICrudApiService, CrudApiService>();
 builder.Services.AddTransient<CommonFunction>();
+/*Rate limit config*/
+//builder.Services.Configure<IpRateLimitOptions>(builder.Configuration.GetSection("IpRateLimiting"));
+//builder.Services.AddSingleton<IRateLimitConfiguration, RateLimitConfiguration>();
+//builder.Services.AddInMemoryRateLimiting();
+builder.Services.AddMemoryCache();
+builder.Services.Configure<IpRateLimitOptions>(
+builder.Configuration.GetSection("IpRateLimiting"));
+builder.Services.AddSingleton<IRateLimitConfiguration, RateLimitConfiguration>();
+builder.Services.AddInMemoryRateLimiting();
+/*Rate limit config*/
+
+/*Redis Config*/
+builder.Services.AddSingleton<IConnectionMultiplexer>(
+    ConnectionMultiplexer.Connect("localhost:6379,abortConnect=false")); // Use container name
+builder.Services.AddHostedService<RedisConsumerService>();
+Console.WriteLine("Connected to Redis!");
+
+/*Redis Config*/
 
 builder.Services.AddEndpointsApiExplorer();
 //builder.Services.AddSwaggerGen(c =>
@@ -50,6 +71,7 @@ if (app.Environment.IsDevelopment())
 }
 
 //app.UseHttpsRedirection();
+app.UseIpRateLimiting();
 app.UseAuthorization();
 app.MapControllers();
 app.Run();
