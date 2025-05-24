@@ -1,0 +1,21 @@
+﻿version: '3.8'
+
+services:
+  redis:
+    image: redis:latest
+    container_name: redis
+    ports:
+      - "6379:6379"
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: testproject_app
+    ports:
+      - "8080:8080"
+      - "8081:8081"
+    environment:
+      - REDIS_CONNECTION=redis:6379
+    depends_on:
+      - redis
