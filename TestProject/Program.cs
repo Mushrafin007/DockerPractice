@@ -25,9 +25,12 @@ builder.Services.AddInMemoryRateLimiting();
 /*Rate limit config*/
 
 /*Redis Config*/
+//builder.Services.AddSingleton<IConnectionMultiplexer>(
+//    ConnectionMultiplexer.Connect("localhost:6379,abortConnect=false")); // Use container name
+//builder.Services.AddHostedService<RedisConsumerService>();
+var redisConnection = Environment.GetEnvironmentVariable("REDIS_CONNECTION") ?? "redis:6379";
 builder.Services.AddSingleton<IConnectionMultiplexer>(
-    ConnectionMultiplexer.Connect("localhost:6379,abortConnect=false")); // Use container name
-builder.Services.AddHostedService<RedisConsumerService>();
+    ConnectionMultiplexer.Connect(redisConnection));
 Console.WriteLine("Connected to Redis!");
 
 /*Redis Config*/

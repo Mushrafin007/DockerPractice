@@ -61,6 +61,7 @@ namespace TestProject.Controller
         {
             var db = _redis.GetDatabase();
             string jsonData = System.Text.Json.JsonSerializer.Serialize(obj);
+
             await db.ListLeftPushAsync("create-queue", jsonData); // Push to Redis queue
             return Ok(new { status = 200, message = "Request received" });
         }
