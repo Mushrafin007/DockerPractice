@@ -89,7 +89,7 @@ namespace TestProject.Controller
                         Id = id
                     };
                     _getUserDataModel = await _ICrudApiService.USP_USERDATA_GET(parameter);
-                    if (_getUserDataModel.Id != 0)
+                    if (_getUserDataModel != null && _getUserDataModel.Id != 0)
                     {
                         HttpContext.Response.StatusCode = (int)HttpStatusCode.OK;
                         _getUserDataModel.message = "User Found";
@@ -99,8 +99,11 @@ namespace TestProject.Controller
                     }
                     else
                     {
+                        ApiCommonResponseModel ApiCommonResponseModel = new ApiCommonResponseModel();
                         HttpContext.Response.StatusCode = (int)HttpStatusCode.OK;
-                        _getUserDataModel.message = "User Not Found";
+                        ApiCommonResponseModel.status = 404;
+                        ApiCommonResponseModel.message = "User Not Found";
+                        return new JsonResult(ApiCommonResponseModel);
                     }
                 }
 
@@ -110,6 +113,36 @@ namespace TestProject.Controller
 
             }
             return new JsonResult(_getUserDataModel);
+        }
+        [Route("api/Crud/deleteuserredis")]
+        [HttpDelete]
+        public async Task<IActionResult> Dedeleteuserredislete([FromQuery] int id)
+        {
+            try
+            {
+                ApiCommonResponseModel apiCommonResponseModel = new ApiCommonResponseModel();
+                object parameter = new { Id = id };
+                apiCommonResponseModel = await _ICrudApiService.USP_DELETE_BY_ID(parameter);
+
+                if (apiCommonResponseModel.status == 200)
+                {
+                    var db = _redis.GetDatabase();
+
+                    // Remove from Redis cache (assuming you cache user data by "user:{id}" key)
+                    string redisKey = $"user:{id}";
+                    await db.KeyDeleteAsync(redisKey);
+
+                    return Ok(apiCommonResponseModel);
+                }
+                else
+                {
+                    return Ok(apiCommonResponseModel);
+                }
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { status = 500, message = "Internal server error", error = ex.Message });
+            }
         }
 
     }

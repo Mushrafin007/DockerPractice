@@ -30,5 +30,11 @@ namespace TestProject.Services.CrudApiService
             var SqlResp = objDapper.ExecuteQuery<getUserDataModel>(sqlQuery, Parameters).FirstOrDefault();
             return SqlResp;
         }
+        public async Task<ApiCommonResponseModel> USP_DELETE_BY_ID(object Parameters)
+        {
+            string sqlQuery = "USP_DELETE_BY_ID";
+            var SqlResp = objDapper.ExecuteQuery<ApiCommonResponseModel>(sqlQuery, Parameters).FirstOrDefault();
+            return SqlResp;
+        }
     }
 }
